@@ -44,7 +44,7 @@ descriptions.
   auto_auth: false, // on first join, automatically add the user to authorized list with used IP.
   use_uuid: true, // use the uuid instead of using the username to identify the users in the authorized list.
   authorized: {
-    "USERNAME or UUID": ["1st IP", "2nd IP", ...]
+    "UUID or USERNAME": ["1st IP", "2nd IP", ...]
   }
 }
 ```

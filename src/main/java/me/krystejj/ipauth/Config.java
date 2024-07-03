@@ -1,22 +1,21 @@
-package studio.weis.ipauth;
+package me.krystejj.ipauth;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class Config {
-
-    public Map<String, Set<String>> authorized;
     public boolean autoAuth;
     public boolean useUuid;
+    public Map<String, Set<String>> authorized;
 
     public Config() {
-        autoAuth = true;
-        useUuid = false;
+        autoAuth = false;
+        useUuid = true;
         authorized = new HashMap<>();
     }
 
     public String serialize() {
-        return IpAuth.GSON.toJson(this, Config.class);
+        return IPAuth.GSON.toJson(this, Config.class);
     }
 }

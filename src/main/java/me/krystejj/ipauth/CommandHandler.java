@@ -1,10 +1,10 @@
-package studio.weis.ipauth;
+package me.krystejj.ipauth;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.server.command.ServerCommandSource;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +22,13 @@ import static net.minecraft.server.command.CommandManager.literal;
 public record CommandHandler(Authorizer authorizer) {
     public CommandHandler(Authorizer authorizer) {
         this.authorizer = authorizer;
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, registrationEnvironment) -> {
             dispatcher.register(rootCommand());
         });
     }
 
     private LiteralArgumentBuilder<ServerCommandSource> rootCommand() {
-        return literal(IpAuth.MOD_ID).requires(source -> source.hasPermissionLevel(4))
+        return literal(IPAuth.MOD_ID).requires(source -> source.hasPermissionLevel(4))
                 .then(literal("add")
                         .then(argument("player", gameProfile()).executes(this::addPlayer)
                                 .then(argument("ip", greedyString()).executes(this::addPlayerIp)))
@@ -77,7 +77,7 @@ public record CommandHandler(Authorizer authorizer) {
         Config config = authorizer.configManager().config;
         boolean newValue = getBool(context, "enabled");
         if (newValue == config.autoAuth) {
-            return new Feedback(false, "Configuration auto_authorize is already set to " + config.autoAuth + ".").toCommandFeedback(context);
+            return new Feedback(false, "Configuration auto_auth is already set to " + config.autoAuth + ".").toCommandFeedback(context);
         }
         config.autoAuth = newValue;
         authorizer.configManager().saveConfig();
@@ -100,8 +100,8 @@ public record CommandHandler(Authorizer authorizer) {
     private int info(CommandContext<ServerCommandSource> context) {
         Config config = authorizer.configManager().config;
         List<String> lines = List.of(
-                "auto_authorize: " + config.autoAuth,
-                "use_uuid:" + config.useUuid,
+                "auto_auth: " + config.autoAuth,
+                "use_uuid: " + config.useUuid,
                 "authorized: " + String.join(", ", config.authorized.keySet())
         );
         return new Feedback(true, String.join("\n", lines)).toCommandFeedback(context);

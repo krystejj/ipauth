@@ -1,29 +1,28 @@
-package studio.weis.ipauth;
+package me.krystejj.ipauth;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.*;
 
 public record Authorizer(ConfigManager configManager) {
-
-
     public Feedback isAuthorized(ServerPlayerEntity player) {
         String id = configManager.config.useUuid ? player.getUuid().toString() : player.getEntityName();
         String ip = player.getIp();
         Config config = configManager.config;
         if (isIdKnown(id)) {
             Set<String> ips = getIpsFromId(id);
-            if (ips.size() == 0) {
+            if (ips.isEmpty()) {
                 ips.add(ip);
+                configManager.saveConfig();
                 return new Feedback(true, "");
             }
-            return new Feedback(ips.contains(ip), "Sorry, you cannot play from a different IP address.");
+            return new Feedback(ips.contains(ip), "You are not allowed to play from this IP address.");
         } else if (config.autoAuth) {
             config.authorized.put(id, new HashSet<>(Collections.singleton(ip)));
             configManager.saveConfig();
             return new Feedback(true, "");
         }
-        return new Feedback(false, "Sorry, you are unauthorized to play.");
+        return new Feedback(false, "You are not allowed to play.");
     }
 
     public Feedback add(List<String> ids, String ips) {

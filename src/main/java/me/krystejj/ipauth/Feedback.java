@@ -1,14 +1,14 @@
-package studio.weis.ipauth;
+package me.krystejj.ipauth;
 
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
-record Feedback(boolean ok, String message){
+public record Feedback(boolean ok, String message) {
     public int toCommandFeedback(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         if (ok) {
-                source.sendFeedback(getTextOfMessage(), true);
+            source.sendFeedback(this::getTextOfMessage, true);
         } else {
             source.sendError(getTextOfMessage());
         }
